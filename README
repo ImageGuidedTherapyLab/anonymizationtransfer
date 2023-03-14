@@ -1,0 +1,9 @@
+
+use slicer to build one db with PHI
+  * build db with 'copy' to build file paths studyuid/seriesuid/sopinstance
+
+java -jar DAT.jar  -in phi -out anon
+
+use slicer to build a second db without PHI
+
+from python join on studyuid/seriesuid/sopinstance to build anonymization key
