@@ -2,7 +2,7 @@
 use slicer to build one db with PHI
   * build db with 'copy' to build file paths studyuid/seriesuid/sopinstance
 
-java -jar DAT.jar  -in phi -out anon
+java -jar DAT.jar  -in phi -out anon -da
 
 use slicer to build a second db without PHI
 
