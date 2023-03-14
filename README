@@ -2,8 +2,12 @@
 use slicer to build one db with PHI
   * build db with 'copy' to build file paths studyuid/seriesuid/sopinstance
 
-java -jar DAT.jar  -in phi -out anon -da
+  /opt/apps/slicer/Slicer-4.10.2-linux-amd64/Slicer --no-splash --python-script ./builddcmdb.py  /home/fuentes/cmdtest /home/fuentes/cagleydata
+
+run anonymization 
+  java -jar DAT.jar  -in /home/fuentes/cmdtest/dicom  phi -out /home/fuentes/cmdanon/dicom -da
 
 use slicer to build a second db without PHI
+  /opt/apps/slicer/Slicer-4.10.2-linux-amd64/Slicer --no-splash --python-script ./builddcmdb.py  /home/fuentes/sliceranon /home/fuentes/cmdanon/dicom
 
 from python join on studyuid/seriesuid/sopinstance to build anonymization key
