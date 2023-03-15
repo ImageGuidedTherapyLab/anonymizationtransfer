@@ -85,7 +85,7 @@ main(int argc, char * argv[])
 {
   if (argc < 3)
   {
-    std::cerr << "Usage: " << argv[0] << " DicomDirectory  OutputDicomDirectory"
+    std::cerr << "Usage: " << argv[0] << " DicomDirectory  OutputDicomDirectory [stack split tag]"
               << std::endl;
     return EXIT_FAILURE;
   }
