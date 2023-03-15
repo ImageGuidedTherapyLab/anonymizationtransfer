@@ -330,8 +330,19 @@ main(int argc, char * argv[])
   //  the writer filter.  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
 
+  // store UID for series 
+  const std::vector<itk::MetaDataDictionary *> *dictionaryarray = reader->GetMetaDataDictionaryArray();
+  //std::size_t numberOfdict = dictionaryarray->size();
+  //std::cout << numberOfdict << std::endl;
+  for (unsigned int jjj = 0; jjj < dictionaryarray->size(); jjj++)
+  {
+    // each element is a raw pointer
+    itk::MetaDataDictionary *mydictionary = dictionaryarray->at(jjj);
+    itk::EncapsulateMetaData<std::string>( *mydictionary , "0020|000e", seriesIdentifier );
+  }
+
+  SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
   seriesWriter->SetInput(reader->GetOutput());
   seriesWriter->SetImageIO(gdcmIO);
   // Software Guide : EndCodeSnippet
