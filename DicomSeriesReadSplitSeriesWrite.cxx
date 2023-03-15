@@ -137,8 +137,23 @@ main(int argc, char * argv[])
 
   // Software Guide : BeginCodeSnippet
   namesGenerator->SetUseSeriesDetails( true );
-  //namesGenerator->AddSeriesRestriction("0008|0021" );   // Series Date
-  namesGenerator->AddSeriesRestriction("0020|0012" );   // Acq number 
+  //entryId =" 0008|0021" ;   // Series Date
+  std::string entryId = "0020|0012" ; // acquisition number
+  if( argc > 3 ) // change the stack break criteria
+    {
+    entryId = argv[3];
+    }
+  std::string labelId;
+  if( itk::GDCMImageIO::GetLabelFromTag( entryId , labelId ) )
+    {
+    std::cout << labelId << " (" << entryId << "): ";
+    }
+  else
+    {
+    std::cerr << "Trying to access inexistant DICOM tag." << entryId<< std::endl;
+    return EXIT_FAILURE;
+    }
+  namesGenerator->AddSeriesRestriction(entryId  ); 
   namesGenerator->SetDirectory(argv[1]);
 
   try
