@@ -138,6 +138,10 @@ main(int argc, char * argv[])
 
   // Software Guide : BeginCodeSnippet
   namesGenerator->SetInputDirectory(argv[1]);
+  namesGenerator->SetUseSeriesDetails( true );
+  //namesGenerator->AddSeriesRestriction("0008|0021" );   // Series Date
+  namesGenerator->AddSeriesRestriction("0020|0012" );   // Acq number 
+
 
   const ReaderType::FileNamesContainer & filenames =
     namesGenerator->GetInputFileNames();
@@ -151,6 +155,76 @@ main(int argc, char * argv[])
     std::cout << filenames[fni] << std::endl;
   }
 
+  try
+    {
+    std::cout << std::endl << "The directory: " << std::endl;
+    std::cout << std::endl << argv[1] << std::endl << std::endl;
+    std::cout << "Contains the following DICOM Series: ";
+    std::cout << std::endl << std::endl;
+
+
+// Software Guide : BeginLatex
+//
+// The GDCMSeriesFileNames object first identifies the list of DICOM series
+// present in the given directory. We receive that list in a reference
+// to a container of strings and then we can do things like print out all
+// the series identifiers that the generator had found. Since the process of
+// finding the series identifiers can potentially throw exceptions, it is
+// wise to put this code inside a \code{try/catch} block.
+//
+// Software Guide : EndLatex
+
+// Software Guide : BeginCodeSnippet
+    typedef std::vector< std::string >    SeriesIdContainer;
+
+    const SeriesIdContainer & seriesUID   = namesGenerator->GetSeriesUIDs();
+
+    SeriesIdContainer::const_iterator seriesItr = seriesUID.begin();
+    SeriesIdContainer::const_iterator seriesEnd = seriesUID.end();
+    //while( seriesItr != seriesEnd  )
+    while( seriesItr == seriesUID.begin())
+      {
+      std::string seriesIdentifier = seriesItr->c_str();
+      std::cout << std::endl << std::endl;
+      std::cout << "Now reading series: " << std::endl << std::endl;
+      std::cout << seriesIdentifier  << std::endl;
+      std::cout << std::endl << std::endl;
+
+
+// Software Guide : BeginLatex
+//
+// Given that it is common to find multiple DICOM series in the same directory,
+// we must tell the GDCM classes what specific series we want to read. In
+// this example we do this by checking first if the user has provided a series
+// identifier in the command line arguments. If no series identifier has been
+// passed, then we simply use the first series found during the exploration of
+// the directory.
+//
+// Software Guide : EndLatex
+
+// Software Guide : BeginCodeSnippet
+
+// Software Guide : EndCodeSnippet
+
+
+
+// Software Guide : BeginLatex
+//
+// We pass the series identifier to the name generator and ask for all the
+// filenames associated to that series. This list is returned in a container of
+// strings by the \code{GetFileNames()} method.
+//
+// \index{itk::GDCMSeriesFileNames!GetFileNames()}
+//
+// Software Guide : EndLatex
+
+// Software Guide : BeginCodeSnippet
+         typedef std::vector< std::string >   FileNamesContainer;
+         FileNamesContainer fileNames;
+     
+         fileNames = namesGenerator->GetFileNames( seriesIdentifier );
+
+// Software Guide : EndCodeSnippet
   // Software Guide : BeginLatex
   //
   // We construct one instance of the series reader object. Set the DICOM image
@@ -319,6 +393,15 @@ main(int argc, char * argv[])
   // from being used as scanner data by accident.
   //
   // Software Guide : EndLatex
+// Software Guide : EndCodeSnippet
+         ++seriesItr;
+         }
+      }
+    catch (itk::ExceptionObject &ex)
+      {
+      std::cout << ex << std::endl;
+      return EXIT_FAILURE;
+      }
 
   return EXIT_SUCCESS;
 }
