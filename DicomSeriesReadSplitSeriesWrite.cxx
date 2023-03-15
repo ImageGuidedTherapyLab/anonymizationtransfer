@@ -65,7 +65,7 @@
 // After all these warnings, let us now go back to the code and get familiar
 // with the use of ITK and GDCM for writing DICOM Series. The first step that
 // we must take is to include the header files of the relevant classes. We
-// include the GDCMImageIO class, the GDCM filenames generator, as well as
+// include the GDCMImageIO class, the GDCM fileNames generator, as well as
 // the series reader and writer.
 //
 // Software Guide : EndLatex
@@ -111,7 +111,7 @@ main(int argc, char * argv[])
   //  We also declare types for the \doxygen{GDCMImageIO} object that will
   //  actually read and write the DICOM images, and the
   //  \doxygen{GDCMSeriesFileNames} object that will generate and order all the
-  //  filenames for the slices composing the volume dataset. Once we have the
+  //  fileNames for the slices composing the volume dataset. Once we have the
   //  types, we proceed to create instances of both objects.
   //
   // Software Guide : EndLatex
@@ -120,40 +120,26 @@ main(int argc, char * argv[])
   using ImageIOType = itk::GDCMImageIO;
   using NamesGeneratorType = itk::GDCMSeriesFileNames;
 
-  ImageIOType::Pointer        gdcmIO = ImageIOType::New();
   NamesGeneratorType::Pointer namesGenerator = NamesGeneratorType::New();
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
   //
-  //  Just as the previous example, we get the DICOM filenames from the
+  //  Just as the previous example, we get the DICOM fileNames from the
   //  directory. Note however, that in this case we use the
   //  \code{SetInputDirectory()} method instead of the \code{SetDirectory()}.
-  //  This is done because in the present case we will use the filenames
-  //  generator for producing both the filenames for reading and the filenames
+  //  This is done because in the present case we will use the fileNames
+  //  generator for producing both the fileNames for reading and the fileNames
   //  for writing. Then, we invoke the \code{GetInputFileNames()} method in order
-  //  to get the list of filenames to read.
+  //  to get the list of fileNames to read.
   //
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  namesGenerator->SetInputDirectory(argv[1]);
   namesGenerator->SetUseSeriesDetails( true );
   //namesGenerator->AddSeriesRestriction("0008|0021" );   // Series Date
   namesGenerator->AddSeriesRestriction("0020|0012" );   // Acq number 
-
-
-  const ReaderType::FileNamesContainer & filenames =
-    namesGenerator->GetInputFileNames();
-  // Software Guide : EndCodeSnippet
-
-  std::size_t numberOfFileNames = filenames.size();
-  std::cout << numberOfFileNames << std::endl;
-  for (unsigned int fni = 0; fni < numberOfFileNames; ++fni)
-  {
-    std::cout << "filename # " << fni << " = ";
-    std::cout << filenames[fni] << std::endl;
-  }
+  namesGenerator->SetDirectory(argv[1]);
 
   try
     {
@@ -181,8 +167,7 @@ main(int argc, char * argv[])
 
     SeriesIdContainer::const_iterator seriesItr = seriesUID.begin();
     SeriesIdContainer::const_iterator seriesEnd = seriesUID.end();
-    //while( seriesItr != seriesEnd  )
-    while( seriesItr == seriesUID.begin())
+    while( seriesItr != seriesEnd  )
       {
       std::string seriesIdentifier = seriesItr->c_str();
       std::cout << std::endl << std::endl;
@@ -211,7 +196,7 @@ main(int argc, char * argv[])
 // Software Guide : BeginLatex
 //
 // We pass the series identifier to the name generator and ask for all the
-// filenames associated to that series. This list is returned in a container of
+// fileNames associated to that series. This list is returned in a container of
 // strings by the \code{GetFileNames()} method.
 //
 // \index{itk::GDCMSeriesFileNames!GetFileNames()}
@@ -224,19 +209,29 @@ main(int argc, char * argv[])
      
          fileNames = namesGenerator->GetFileNames( seriesIdentifier );
 
+         std::size_t numberOfFileNames = fileNames.size();
+         std::cout << numberOfFileNames << std::endl;
+         // for (unsigned int fni = 0; fni < numberOfFileNames; ++fni)
+         // {
+         //   std::cout << "filename # " << fni << " = ";
+         //   std::cout << fileNames[fni] << std::endl;
+         // }
 // Software Guide : EndCodeSnippet
   // Software Guide : BeginLatex
   //
   // We construct one instance of the series reader object. Set the DICOM image
-  // IO object to be used with it, and set the list of filenames to read.
+  // IO object to be used with it, and set the list of fileNames to read.
   //
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
   ReaderType::Pointer reader = ReaderType::New();
+  ImageIOType::Pointer        gdcmIO = ImageIOType::New();
 
+  // keep original UID
+  gdcmIO->SetKeepOriginalUID(true);
   reader->SetImageIO(gdcmIO);
-  reader->SetFileNames(filenames);
+  reader->SetFileNames(fileNames);
   // Software Guide : EndCodeSnippet
 
   // Software Guide : BeginLatex
@@ -293,8 +288,6 @@ main(int argc, char * argv[])
   //
   //  Software Guide : EndLatex
 
-  // Software Guide : BeginCodeSnippet
-  itksys::SystemTools::MakeDirectory(outputDirectory);
   // Software Guide : EndCodeSnippet
 
   // Software Guide : BeginLatex
@@ -330,7 +323,7 @@ main(int argc, char * argv[])
 
   //  Software Guide : BeginLatex
   //
-  //  It is time now to setup the GDCMSeriesFileNames to generate new filenames
+  //  It is time now to setup the GDCMSeriesFileNames to generate new fileNames
   //  using another output directory.  Then simply pass those newly generated
   //  files to the series writer.
   //
@@ -341,7 +334,12 @@ main(int argc, char * argv[])
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  namesGenerator->SetOutputDirectory(outputDirectory);
+  int myindex = std::distance( seriesUID.begin(), seriesItr  );
+  std::ostringstream output4ddir ;
+  output4ddir << outputDirectory << myindex ;
+  namesGenerator->SetOutputDirectory(output4ddir.str());
+  // Software Guide : BeginCodeSnippet
+  itksys::SystemTools::MakeDirectory(output4ddir.str());
 
   seriesWriter->SetFileNames(namesGenerator->GetOutputFileNames());
   // Software Guide : EndCodeSnippet
@@ -388,7 +386,7 @@ main(int argc, char * argv[])
   //
   // Please keep in mind that you should avoid generating DICOM files which have
   // the appearance of being produced by a scanner. It should be clear from the
-  // directory or filenames that these data were the result of the
+  // directory or fileNames that these data were the result of the
   // execution of some sort of algorithm. This will prevent your dataset
   // from being used as scanner data by accident.
   //
