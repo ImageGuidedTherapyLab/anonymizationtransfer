@@ -11,3 +11,4 @@ use slicer to build a second db without PHI
   /opt/apps/slicer/Slicer-4.10.2-linux-amd64/Slicer --no-splash --python-script ./builddcmdb.py link /home/fuentes/cmdanon /home/fuentes/cmdanon/dicom
 
 from python join on studyuid/seriesuid/sopinstance to build anonymization key
+  python anonkey.py
