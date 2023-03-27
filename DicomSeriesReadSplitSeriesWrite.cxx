@@ -75,6 +75,7 @@
 #include "itkGDCMSeriesFileNames.h"
 #include "itkImageSeriesReader.h"
 #include "itkImageSeriesWriter.h"
+#include "gdcmUIDGenerator.h"
 // Software Guide : EndCodeSnippet
 
 #include <vector>
@@ -331,15 +332,17 @@ main(int argc, char * argv[])
 
   // Software Guide : BeginCodeSnippet
 
-  // store UID for series 
+  // generate and store new UID for series 
   const std::vector<itk::MetaDataDictionary *> *dictionaryarray = reader->GetMetaDataDictionaryArray();
   //std::size_t numberOfdict = dictionaryarray->size();
   //std::cout << numberOfdict << std::endl;
+  gdcm::UIDGenerator uid;
+  std::string mySeriesInstanceUID = uid.Generate();
   for (unsigned int jjj = 0; jjj < dictionaryarray->size(); jjj++)
   {
     // each element is a raw pointer
     itk::MetaDataDictionary *mydictionary = dictionaryarray->at(jjj);
-    itk::EncapsulateMetaData<std::string>( *mydictionary , "0020|000e", seriesIdentifier );
+    itk::EncapsulateMetaData<std::string>( *mydictionary , "0020|000e", mySeriesInstanceUID );
   }
 
   SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
