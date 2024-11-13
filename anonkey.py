@@ -1,8 +1,8 @@
 import sqlite3
 import os
 import csv
-anonconn = sqlite3.connect('/home/fuentes/cmdanon/ctkDICOM.sql')
-phiconn  = sqlite3.connect('/home/fuentes/cmdtest/ctkDICOM.sql')
+anonconn = sqlite3.connect('/mnt/c/Users/dtfuentes/anontest/dbanon/ctkDICOM.sql')
+phiconn  = sqlite3.connect('/mnt/c/Users/dtfuentes/anontest/dbdirectory/ctkDICOM.sql')
 
 # get data from anonymized db
 cursor = anonconn.execute('''
