@@ -4,17 +4,14 @@ import csv
 anonconn = sqlite3.connect('/mnt/c/Users/dtfuentes/anontest/dbanon/ctkDICOM.sql')
 phiconn  = sqlite3.connect('/mnt/c/Users/dtfuentes/anontest/dbdirectory/ctkDICOM.sql')
 
-# FIXME - not portable
-fileroot = 'C:/Users/dtfuentes/anontest/dbanon/dicom/'
-
 # get data from anonymized db
 cursor = anonconn.execute('''
-select pt.UID,pt.PatientID,st.StudyInstanceUID,st.StudyDate,se.SeriesInstanceUID,im.SOPInstanceUID, replace(im.Filename, '%s','') as phiUID
+select pt.UID,pt.PatientID,st.StudyInstanceUID,st.StudyDate,se.SeriesInstanceUID,im.SOPInstanceUID, im.Filename as phiUID
                                        from Patients pt join Studies  st on pt.UID= st.PatientsUID 
                                        join Series  se on se.StudyInstanceUID= st.StudyInstanceUID 
                                        join images   im on se.seriesInstanceUID= im.seriesInstanceUID;
-''' % fileroot)
-anonymizekey = [ row[:-1] + tuple(row[-1].split('/')) for row in cursor]
+''' )
+anonymizekey = [ row[:6] + tuple(row[-1].split('/')[-3:]) for row in cursor]
 # get phi from anonymized db
 cursor = phiconn.execute('''
 select pt.UID,pt.PatientID,st.StudyInstanceUID,st.StudyDate,se.SeriesInstanceUID,im.SOPInstanceUID
