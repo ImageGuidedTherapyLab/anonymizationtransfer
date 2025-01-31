@@ -6,20 +6,30 @@
 
   /mnt/c/Program\ Files/Slicer\ 4.10.2/Slicer.exe --no-splash --python-script anonymizationtransfer/builddcmdb.py copy "C:\Users\dtfuentes\anontest\dbdirectory" "C:\Users\dtfuentes\anontest\inputimages"
 
+  powershell.exe
+  cd C:\
+  & 'C:\Program\ Files\Slicer\ 4.10.2\Slicer.exe' --no-splash --python-script 'C:\Users\dtfuentes\OneDrive - mdanderson.org\github\anonymizationtransfer\builddcmdb.py' copy C:\Users\dtfuentes\anontest\dbdirectory C:\Users\dtfuentes\anontest\inputimages
+
 
 2. run anonymization 
 https://mircwiki.rsna.org/index.php?title=The_DicomAnonymizerTool
 
   Run the mirc.rsna.org/DicomAnonymizerTool-installer.jar to install
-  java -jar DAT/DicomAnonymizerTool/DAT.jar  -in /mnt/c/Users/dtfuentes/anontest/dbdirectory/dicom  phi -out  /mnt/c/Users/dtfuentes/anontest/dbanon/dicom -da
 
+  mkdir dbanon/dicom
 
+  java -jar DAT/DicomAnonymizerTool/DAT.jar  -in /mnt/c/Users/dtfuentes/anontest/dbdirectory/dicom  -out  /mnt/c/Users/dtfuentes/anontest/dbanon/dicom -da
+
+  powershell.exe
+  & java.exe -jar DAT/DicomAnonymizerTool/DAT.jar  -in  C:\Users\dtfuentes\anontest\dbdirectory\dicom  -out C:\Users\dtfuentes\anontest\dbanon\dicom -da
 
 3. use slicer to build a second db without PHI
   /opt/apps/slicer/Slicer-4.10.2-linux-amd64/Slicer --no-splash --python-script ./builddcmdb.py link /home/fuentes/cmdanon /home/fuentes/cmdanon/dicom
 
   /mnt/c/Program\ Files/Slicer\ 4.10.2/Slicer.exe --no-splash --python-script anonymizationtransfer/builddcmdb.py link "C:\Users\dtfuentes\anontest\dbanon" "C:\Users\dtfuentes\anontest\dbanon\dicom"
 
+  powershell.exe
+  & 'C:\Program\ Files\Slicer\ 4.10.2\Slicer.exe' --no-splash --python-script 'C:\Users\dtfuentes\OneDrive - mdanderson.org\github\anonymizationtransfer\builddcmdb.py' link C:\Users\dtfuentes\anontest\dbanon C:\Users\dtfuentes\anontest\dbanon\dicom
 
 4. from python join on studyuid/seriesuid/sopinstance to build anonymization key
   python anonkey.py
