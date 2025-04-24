@@ -1,3 +1,10 @@
+0. Install WSL - https://learn.microsoft.com/en-us/windows/wsl/install
+   Open CMD with admin level rights, and run this CLIs
+
+   wsl --update
+
+   wsl --install -d ubuntu
+
 
 1. use slicer to build one db with PHI
   * build db with 'copy' to build file paths studyuid/seriesuid/sopinstance
